@@ -43,6 +43,8 @@ class NeuralNetwork:
 		desired_change = hidden_errors * hidden_vector * (1 - hidden_vector)
 		self.weights_ih += self.learning_rate * np.dot(desired_change, input_vector.T)
 
+		return output_errors
+
 
 
 	def run(self, input_vector):
