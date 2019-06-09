@@ -9,10 +9,12 @@ def truncated_normal(mean=0, std_dev=1, lower=0, upper=10):
 
 class NeuralNetwork:
 
-	def __init__(self, input_nodes, hidden_nodes):
+	def __init__(self, input_nodes, hidden_nodes, learning_rate):
 		self.input_nodes = input_nodes
 		self.hidden_nodes = hidden_nodes
 		self.output_nodes = 1
+
+		self.learning_rate = learning_rate
 
 		self.weights_ih = self.create_weight_matrix(input_nodes, hidden_nodes)
 		self.weights_ho = self.create_weight_matrix(hidden_nodes, 1)
@@ -26,18 +28,27 @@ class NeuralNetwork:
 
 
 
-	def train(self, input_vector, expected_odds):
-		pass
+	def train(self, input_vector, expected_output):
+		input_vector = np.array(input_vector, ndmin=2).T
+		expected_output = np.array(expected_output, ndmin=2).T
+
+		hidden_vector = expit(np.dot(self.weights_ih, input_vector))
+		output_vector = expit(np.dot(self.weights_ho, hidden_vector))
+
+		output_errors = expected_output - output_vector
+		desired_change = output_errors * output_vector * (1 - output_vector)
+		self.weights_ho += self.learning_rate * np.dot(desired_change, hidden_vector.T)
+
+		hidden_errors = np.dot(self.weights_ho.T, output_errors)
+		desired_change = hidden_errors * hidden_vector * (1 - hidden_vector)
+		self.weights_ih += self.learning_rate * np.dot(desired_change, input_vector.T)
 
 
 
 	def run(self, input_vector):
 		input_vector = np.array(input_vector, ndmin=2).T
 
-		output_vector = np.dot(self.weights_ih, input_vector)
-		output_vector = expit(output_vector)
-
-		output_vector = np.dot(self.weights_ho, output_vector)
-		output_vector = expit(output_vector)
+		output_vector = expit(np.dot(self.weights_ih, input_vector))
+		output_vector = expit(np.dot(self.weights_ho, output_vector))
 
 		return output_vector
