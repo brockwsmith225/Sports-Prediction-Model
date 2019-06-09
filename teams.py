@@ -9,6 +9,6 @@ class Team:
 		self.oppg = 0
 
 	def add_game(self, points, opponent_points):
-		ppg = ((ppg * games) + points) / (games + 1)
-		oppg = ((oppg * games) + opponent_points) / (games + 1)
-		games++
+		self.ppg = ((self.ppg * self.games) + points) / (self.games + 1)
+		self.oppg = ((self.oppg * self.games) + opponent_points) / (self.games + 1)
+		self.games += 1
